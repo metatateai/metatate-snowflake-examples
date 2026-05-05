@@ -2,16 +2,15 @@
 
 Metatate is a programmable decision layer for Snowflake data. It turns policies, classifications, data meaning, retention guidance, and transfer controls into structured context that agents and workflows can query before they use data.
 
-This repository contains public examples for making governed Snowflake data agent-ready with Metatate.
+This repository contains examples for making governed Snowflake data agent-ready with Metatate.
 
-## Phase 1: Snowflake-native proof pack
+## Snowflake-native Examples
 
-The first release focuses on the strongest validated path today:
+These examples focus on the Snowflake-native path:
 
 - Snowflake Intelligence custom tools through Metatate's `core.agent_*` wrapper layer
 - MCP cookbook workflows that compose discovery, meaning, authorization, validation, and explanation
 - Transfer governance decisions for external data movement
-- Marketplace quick-start SQL for the Snowflake Provider Studio listing flow
 - Sanitized sample evidence generated from a repeatable demo reliability gate
 
 Later releases will add Claude Code, Claude Desktop, pipeline gates, Cortex Code, policy-as-code, and playground examples.
@@ -32,7 +31,6 @@ When data carries its own instructions, agents do not need to guess whether a us
 ```text
 snowflake-intelligence/   Snowflake Intelligence setup, wrapper map, and prompts
 mcp-cookbook/             Five validated decision workflows
-marketplace-quickstart/   Provider Studio SQL quick-start content
 demo-evidence/            Sanitized generated evidence examples
 ```
 
@@ -63,4 +61,10 @@ The sample flows use customer-defined controls, not named external compliance ca
 2. Review the wrapper map in `snowflake-intelligence/wrapper-tool-map.md`.
 3. Run or inspect the cookbook in `mcp-cookbook/recipes.sql`.
 4. Review sanitized outputs in `demo-evidence/sample-json/`.
-5. Use `marketplace-quickstart/provider-studio-sql-example.md` if you are preparing a Snowflake Marketplace listing quick-start.
+
+## Links
+
+- Metatate docs: https://docs.getmetatate.com
+- MCP cookbook: https://docs.getmetatate.com/mcp/cookbook
+- Learn use cases: https://www.getmetatate.com/learn
+- Snowflake Marketplace listing: add the final listing URL before public launch
