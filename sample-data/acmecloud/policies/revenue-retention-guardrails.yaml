@@ -1,0 +1,46 @@
+apiVersion: metatate.io/v1
+kind: DataPolicy
+metadata:
+  name: acme-retention
+  version: 1.0.0
+  description: Subscription and revenue facts support internal reporting with retention context.
+  labels:
+    demo: acmecloud
+    domain: revenue-operations
+  tags:
+    - commercial_sensitive
+    - retention_required
+spec:
+  enforcementMode: advisory
+  priority: 90
+  selector:
+    tables:
+      - ACMECLOUD_DEMO.PUBLIC.SUBSCRIPTIONS
+  classification:
+    sensitivity: internal
+    category: financial
+  meaningLayer:
+    permittedUses:
+      - analytics
+      - reporting
+      - renewal_planning
+    prohibitedUses:
+      - public_sharing
+    businessContext:
+      owner: Finance Analytics
+      steward: finance-data@example.com
+      domain: Revenue Operations
+      purpose: Subscription facts used for ARR reporting and renewal planning.
+      definitions:
+        arr: Annual recurring revenue associated with a subscription.
+    retention:
+      period: 5 years
+      trigger: subscription end
+      action: archive
+    lineage:
+      sources:
+        - BILLING.SUBSCRIPTIONS
+      transformations:
+        - currency_standardization
+      dependentSystems:
+        - CUSTOMERS

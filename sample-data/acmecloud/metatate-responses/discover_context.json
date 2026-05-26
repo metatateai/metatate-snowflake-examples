@@ -1,0 +1,86 @@
+{
+  "request_id": "offline-discover-acmecloud",
+  "snapshot_id": "offline-acmecloud-v1",
+  "as_of": "2026-05-26T00:00:00Z",
+  "status": "ok",
+  "data": {
+    "total": 5,
+    "tables": [
+      {
+        "full_table_name": "ACMECLOUD_DEMO.PUBLIC.CUSTOMERS",
+        "database_name": "ACMECLOUD_DEMO",
+        "schema_name": "PUBLIC",
+        "table_name": "CUSTOMERS",
+        "sensitivity": "confidential",
+        "enforcement_mode": "enforce",
+        "policy_names": ["Customer Use Guardrails", "Transfer Guardrails"],
+        "tags": ["acmecloud", "customer", "privacy_sensitive"],
+        "compliance_frameworks": ["privacy_sensitive", "restricted_transfer", "ai_training_blocked"],
+        "has_pii": true,
+        "pii_column_count": 3,
+        "domain": "Customer Data",
+        "owner": "Revenue Operations"
+      },
+      {
+        "full_table_name": "ACMECLOUD_DEMO.PUBLIC.SUBSCRIPTIONS",
+        "database_name": "ACMECLOUD_DEMO",
+        "schema_name": "PUBLIC",
+        "table_name": "SUBSCRIPTIONS",
+        "sensitivity": "internal",
+        "enforcement_mode": "advisory",
+        "policy_names": ["Revenue Retention Guardrails"],
+        "tags": ["acmecloud", "revenue"],
+        "compliance_frameworks": ["commercial_sensitive", "retention_required"],
+        "has_pii": false,
+        "pii_column_count": 0,
+        "domain": "Revenue Operations",
+        "owner": "Finance Analytics"
+      },
+      {
+        "full_table_name": "ACMECLOUD_DEMO.PUBLIC.PRODUCT_USAGE_EVENTS",
+        "database_name": "ACMECLOUD_DEMO",
+        "schema_name": "PUBLIC",
+        "table_name": "PRODUCT_USAGE_EVENTS",
+        "sensitivity": "internal",
+        "enforcement_mode": "monitor",
+        "policy_names": ["Customer Use Guardrails"],
+        "tags": ["acmecloud", "behavioral_events"],
+        "compliance_frameworks": ["privacy_sensitive", "retention_required"],
+        "has_pii": true,
+        "pii_column_count": 1,
+        "domain": "Product Analytics",
+        "owner": "Product Analytics"
+      },
+      {
+        "full_table_name": "ACMECLOUD_DEMO.PUBLIC.SUPPORT_TICKETS",
+        "database_name": "ACMECLOUD_DEMO",
+        "schema_name": "PUBLIC",
+        "table_name": "SUPPORT_TICKETS",
+        "sensitivity": "confidential",
+        "enforcement_mode": "enforce",
+        "policy_names": ["Customer Use Guardrails"],
+        "tags": ["acmecloud", "support"],
+        "compliance_frameworks": ["privacy_sensitive", "ai_training_blocked"],
+        "has_pii": true,
+        "pii_column_count": 2,
+        "domain": "Customer Data",
+        "owner": "Support Operations"
+      },
+      {
+        "full_table_name": "ACMECLOUD_DEMO.PUBLIC.CUSTOMER_EXPORTS",
+        "database_name": "ACMECLOUD_DEMO",
+        "schema_name": "PUBLIC",
+        "table_name": "CUSTOMER_EXPORTS",
+        "sensitivity": "restricted",
+        "enforcement_mode": "enforce",
+        "policy_names": ["Transfer Guardrails"],
+        "tags": ["acmecloud", "exports", "privacy_sensitive"],
+        "compliance_frameworks": ["restricted_transfer", "privacy_sensitive"],
+        "has_pii": true,
+        "pii_column_count": 2,
+        "domain": "Customer Data",
+        "owner": "Data Platform"
+      }
+    ]
+  }
+}

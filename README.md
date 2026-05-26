@@ -1,66 +1,123 @@
 # Metatate Examples
 
-Metatate is a programmable decision layer for Snowflake data. It turns policies, classifications, data meaning, retention guidance, and transfer controls into structured context that agents and workflows can query before they use data.
+Metatate is a programmable decision layer for data. It turns policies, classifications, business meaning, transfer rules, and access decisions into structured context that agents and workflows can query before they use data.
 
-This repository contains public examples for making governed Snowflake data agent-ready with Metatate.
+This repo is a public cookbook for showing that value in concrete examples. The examples use one synthetic B2B SaaS company, AcmeCloud, so every notebook builds on the same data, policies, and decisions.
 
-## Phase 1: Snowflake-native proof pack
+## What This Repo Is
 
-The first release focuses on the strongest validated path today:
+This is the demo and examples repo. It is not the source of truth for installable plugins.
 
-- Snowflake Intelligence custom tools through Metatate's `core.agent_*` wrapper layer
-- MCP cookbook workflows that compose discovery, meaning, authorization, validation, and explanation
-- Transfer governance decisions for external data movement
-- Marketplace quick-start SQL for the Snowflake Provider Studio listing flow
-- Sanitized sample evidence generated from a repeatable demo reliability gate
+Plugin repos stay separate:
 
-Later releases will add Claude Code, Claude Desktop, pipeline gates, Cortex Code, policy-as-code, and playground examples.
+- `metatate-claude-plugins` for the Claude Code plugin
+- `metatate-cortex-code-plugin` for the Cortex Code plugin
 
-## What this proves
+This repo carries notebooks, sample data, SQL fixtures, expected outputs, and framework-specific walkthroughs.
 
-When data carries its own instructions, agents do not need to guess whether a use is safe. They can ask Metatate:
+## Demo Domain
 
-- Which governed tables are available?
-- What does this table or column mean?
-- What policies and transfer controls apply?
-- Is this use allowed, denied, conditional, or unknown?
-- Is this generated SQL safe to run?
-- Why did Metatate make that decision?
+AcmeCloud is a fictional B2B SaaS company. The sample data covers customer operations, revenue, product usage, support, and prepared exports.
 
-## Repository map
+The first examples focus on these governed tables:
+
+- `ACMECLOUD_DEMO.PUBLIC.CUSTOMERS`
+- `ACMECLOUD_DEMO.PUBLIC.SUBSCRIPTIONS`
+- `ACMECLOUD_DEMO.PUBLIC.PRODUCT_USAGE_EVENTS`
+- `ACMECLOUD_DEMO.PUBLIC.SUPPORT_TICKETS`
+- `ACMECLOUD_DEMO.PUBLIC.CUSTOMER_EXPORTS`
+
+The demo policies are intentionally practical:
+
+- customer PII can be used for analytics and reporting only when sensitive columns are minimized or masked
+- direct marketing and advertising use are blocked unless a consent-specific workflow is added
+- customer records and support tickets cannot be used for model training
+- prepared customer exports require transfer approval
+- approved CRM exports are conditional; advertising-platform exports are denied
+
+## Repository Map
 
 ```text
-snowflake-intelligence/   Snowflake Intelligence setup, wrapper map, and prompts
-mcp-cookbook/             Five validated decision workflows
-marketplace-quickstart/   Provider Studio SQL quick-start content
-demo-evidence/            Sanitized generated evidence examples
+common/                         Shared Python client helpers
+docs/                           Setup, demo model, and troubleshooting
+notebooks/                      Notebook-first walkthroughs
+sample-data/acmecloud/tables/   Small synthetic CSV tables
+sample-data/acmecloud/policies/ Example policy YAML
+sample-data/acmecloud/metatate-responses/
+                                Offline Metatate response fixtures
+sample-outputs/                 Curated expected output summaries
+scripts/                        Validation and notebook rendering helpers
+sql/                            Snowflake demo table and Metatate fixture SQL
 ```
 
-## Prerequisites
+## Notebook Pack
 
-To run the SQL examples against your own account, you need:
+Start here:
 
-- Metatate installed as a Snowflake Native App
-- The app initialized and granted the required references
-- An app warehouse reference configured for MCP and wrapper execution
-- At least one deployed policy or the demo fixture described in the examples
-- A Snowflake role that can use the Metatate app objects
+1. `notebooks/00_setup_live_or_offline.ipynb`
+2. `notebooks/01_decision_layer_cookbook.ipynb`
+3. `notebooks/02_governed_sql_agent_langgraph.ipynb`
+4. `notebooks/03_transfer_governance_before_export.ipynb`
 
-If you do not have Metatate installed yet, you can still read the sample outputs in `demo-evidence/` to understand the decision flow.
+The notebooks default to offline mode and use committed sample Metatate responses. That means a reader can understand the decision flow without Snowflake credentials.
 
-## Demo control tags
+Live mode is optional. It calls the Metatate Native App in your Snowflake account through the same canonical `core.*` tool layer used by the managed MCP server.
 
-The sample flows use customer-defined controls, not named external compliance catalogs:
+## Quick Start
 
-- `privacy_sensitive`
-- `restricted_transfer`
-- `retention_required`
-- `ai_training_blocked`
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+jupyter notebook notebooks
+```
 
-## Start here
+Offline mode works with no additional configuration.
 
-1. Read `snowflake-intelligence/setup-guide.md`.
-2. Review the wrapper map in `snowflake-intelligence/wrapper-tool-map.md`.
-3. Run or inspect the cookbook in `mcp-cookbook/recipes.sql`.
-4. Review sanitized outputs in `demo-evidence/sample-json/`.
-5. Use `marketplace-quickstart/provider-studio-sql-example.md` if you are preparing a Snowflake Marketplace listing quick-start.
+For live mode:
+
+```bash
+cp .env.example .env
+# Fill in Snowflake connection values.
+pip install -r requirements-live.txt
+```
+
+Then set:
+
+```bash
+export METATATE_EXAMPLES_MODE=live
+```
+
+See [docs/live-mode.md](docs/live-mode.md).
+
+## Snowflake Fixture
+
+To create the AcmeCloud demo tables and seed Metatate's serving-table fixture in a development or demo account, review:
+
+- [docs/snowflake-setup.md](docs/snowflake-setup.md)
+- [sql/setup_acmecloud_demo.sql](sql/setup_acmecloud_demo.sql)
+- [sql/smoke_acmecloud_demo.sql](sql/smoke_acmecloud_demo.sql)
+- [sql/cleanup_acmecloud_demo.sql](sql/cleanup_acmecloud_demo.sql)
+
+The fixture SQL mirrors the Metatate Native App serving tables used by the MCP tools:
+
+- `app_data.governed_tables`
+- `app_data.deployed_instructions`
+- `app_data.deployed_usage_rules`
+- `app_data.deployed_transfer_rules`
+- `app_data.deployed_validation_rules`
+- `app_data.deployed_column_details`
+- `app_data.deployed_data_meaning`
+
+For production use, deploy policies through Metatate. The SQL fixture is for examples, demos, and repeatable local validation.
+
+## Core Message
+
+When your data carries its own instructions, agents do not just access it. They understand what they are allowed to do, what controls apply, and why a decision was made.
+
+## Links
+
+- Metatate docs: https://docs.getmetatate.com
+- MCP cookbook: https://docs.getmetatate.com/mcp/cookbook
+- Learn use cases: https://www.getmetatate.com/learn
+- Snowflake Marketplace listing: https://app.snowflake.com/marketplace/listing/GZ2FTZU03OAS

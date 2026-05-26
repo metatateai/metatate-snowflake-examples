@@ -1,0 +1,6 @@
+CUSTOMER_ID,ACCOUNT_ID,CUSTOMER_NAME,EMAIL,REGION,COUNTRY,ACCOUNT_STATUS,MARKETING_CONSENT,SIGNUP_DATE,ARR
+101,A-1001,Ava Patel,ava.patel@example.com,NA,US,active,analytics_only,2024-01-12,84000
+102,A-1002,Mateo Garcia,mateo.garcia@example.com,EU,DE,active,analytics_only,2024-02-03,126000
+103,A-1003,Lina Chen,lina.chen@example.com,NA,US,review,support_only,2024-03-18,42000
+104,A-1004,Nora Jensen,nora.jensen@example.com,EU,DK,active,opted_out,2024-05-22,99000
+105,A-1005,Sam Rivera,sam.rivera@example.com,CA,CA,active,analytics_only,2025-01-09,57000

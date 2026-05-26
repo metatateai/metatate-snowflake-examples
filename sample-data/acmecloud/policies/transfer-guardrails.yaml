@@ -1,0 +1,74 @@
+apiVersion: metatate.io/v1
+kind: DataPolicy
+metadata:
+  name: acme-transfer
+  version: 1.0.0
+  description: Customer exports require destination-aware authorization before leaving Snowflake.
+  labels:
+    demo: acmecloud
+    domain: customer-data
+  tags:
+    - restricted_transfer
+    - privacy_sensitive
+spec:
+  enforcementMode: enforce
+  priority: 200
+  selector:
+    tables:
+      - ACMECLOUD_DEMO.PUBLIC.CUSTOMERS
+      - ACMECLOUD_DEMO.PUBLIC.CUSTOMER_EXPORTS
+  classification:
+    sensitivity: restricted
+    category: pii
+  transferGovernance:
+    defaultEffect: conditional
+    rules:
+      - id: acmecloud-salesforce-conditional
+        effect: conditional
+        operations:
+          - export
+        destinationSystems:
+          - SALESFORCE
+        destinationJurisdictions:
+          - US
+        consumerJurisdictions:
+          - EU
+        requiresApproval: true
+        requiresAnonymization: true
+      - id: acmecloud-ad-platform-deny
+        effect: deny
+        operations:
+          - export
+        destinationSystems:
+          - ADS_PLATFORM
+        destinationJurisdictions:
+          - US
+        consumerJurisdictions:
+          - US
+        requiresApproval: false
+        requiresAnonymization: false
+      - id: acmecloud-external-llm-training-deny
+        effect: deny
+        operations:
+          - export
+        destinationSystems:
+          - EXTERNAL_LLM_VENDOR
+        destinationJurisdictions:
+          - US
+        consumerJurisdictions:
+          - US
+        requiresApproval: false
+        requiresAnonymization: false
+  meaningLayer:
+    permittedUses:
+      - external_sharing
+    prohibitedUses:
+      - advertising
+      - ml_training
+    businessContext:
+      owner: Data Platform
+      steward: data-platform@example.com
+      domain: Customer Data
+      purpose: Prepared customer exports for approved downstream operational systems.
+      definitions:
+        export_batch: A governed file-equivalent table staged for outbound transfer.

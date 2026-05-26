@@ -1,0 +1,4 @@
+EXPORT_ID,CUSTOMER_ID,CUSTOMER_NAME,EMAIL,ACCOUNT_STATUS,EXPORT_BATCH_ID,DESTINATION_SYSTEM
+E-9001,101,Ava Patel,ava.patel@example.com,active,batch-demo-001,SALESFORCE
+E-9002,102,Mateo Garcia,mateo.garcia@example.com,active,batch-demo-001,SALESFORCE
+E-9003,104,Nora Jensen,nora.jensen@example.com,active,batch-demo-002,ADS_PLATFORM

@@ -1,0 +1,6 @@
+EVENT_ID,CUSTOMER_ID,EVENT_TYPE,EVENT_TS,FEATURE_NAME,DEVICE_ID,REGION
+1,101,login,2026-04-20 09:15:00,dashboard,device-us-001,NA
+2,102,export,2026-04-22 16:44:00,report_builder,device-eu-002,EU
+3,103,support_view,2026-04-24 12:30:00,case_console,device-us-003,NA
+4,104,login,2026-04-25 08:11:00,dashboard,device-eu-004,EU
+5,105,workflow_run,2026-04-27 14:02:00,automation,device-ca-005,CA

@@ -1,0 +1,71 @@
+# AcmeCloud Demo Data Model
+
+AcmeCloud is a synthetic B2B SaaS company. The dataset is intentionally small so the examples stay readable, but it includes enough variety to demonstrate policy-aware agent behavior.
+
+## Tables
+
+### `ACMECLOUD_DEMO.PUBLIC.CUSTOMERS`
+
+Customer master data used by revenue operations, support, analytics, and approved reporting workflows.
+
+Key governance points:
+
+- contains PII columns such as `CUSTOMER_NAME` and `EMAIL`
+- supports analytics and reporting
+- blocks direct marketing and advertising use in the base policy
+- blocks model training
+- has transfer rules for exports
+
+### `ACMECLOUD_DEMO.PUBLIC.SUBSCRIPTIONS`
+
+Subscription and ARR facts used by revenue reporting and renewal planning.
+
+Key governance points:
+
+- commercially sensitive but not PII-heavy
+- usable for finance analytics and internal reporting
+- has retention context
+
+### `ACMECLOUD_DEMO.PUBLIC.PRODUCT_USAGE_EVENTS`
+
+Product event data used for product analytics and support diagnostics.
+
+Key governance points:
+
+- includes device identifiers
+- monitored for privacy-sensitive use
+- usable for product analytics and support
+
+### `ACMECLOUD_DEMO.PUBLIC.SUPPORT_TICKETS`
+
+Support text and case metadata.
+
+Key governance points:
+
+- ticket text can contain personal or confidential customer information
+- support workflows and internal analytics are allowed
+- model training is blocked
+
+### `ACMECLOUD_DEMO.PUBLIC.CUSTOMER_EXPORTS`
+
+Prepared export table used to demonstrate outbound transfer governance.
+
+Key governance points:
+
+- contains prepared PII for outbound systems
+- exports require approval and anonymization where required
+- approved CRM export is conditional
+- advertising platform export is denied
+
+## Control Tags
+
+The examples use customer-defined control tags instead of named legal articles:
+
+- `privacy_sensitive`
+- `restricted_transfer`
+- `retention_required`
+- `ai_training_blocked`
+- `commercial_sensitive`
+
+That keeps the examples focused on the decision layer rather than legal interpretation.
+
