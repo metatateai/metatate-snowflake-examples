@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Changed live notebook mode to call the Snowflake-managed Metatate MCP server
+  over HTTP with a role-restricted PAT.
+- Removed the direct Snowflake SQL connector live path from examples.
+
 ## 0.1.0
 
 - Rebuilt the examples repo around the AcmeCloud synthetic B2B SaaS dataset.
@@ -10,4 +16,3 @@
   - decision-layer cookbook
   - governed SQL agent with LangGraph
   - transfer governance before export
-
