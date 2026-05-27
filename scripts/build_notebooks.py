@@ -432,7 +432,12 @@ def governed_text_to_sql_notebook() -> dict:
             code(
                 """
                 findings = validation["data"].get("sql_findings", [])
-                needs_revision = any(item.get("code") == "PII_COLUMN_SELECTED" for item in findings)
+                needs_revision = any(
+                    item.get("code") == "PII_COLUMN_SELECTED"
+                    or item.get("type") == "PII_COLUMN"
+                    or (item.get("code") == "MASKING_REQUIRED" and item.get("column"))
+                    for item in findings
+                )
 
                 if needs_revision:
                     final_sql = (

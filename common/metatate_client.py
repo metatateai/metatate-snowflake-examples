@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -169,6 +170,8 @@ class ManagedMCPMetatateClient:
         self.token_type = os.getenv("METATATE_MCP_TOKEN_TYPE", "PROGRAMMATIC_ACCESS_TOKEN")
         self.token_env = os.getenv("METATATE_MCP_PAT_ENV", "METATATE_EXAMPLES_PAT")
         self.timeout_seconds = int(os.getenv("METATATE_MCP_TIMEOUT_SECONDS", "120"))
+        self.retry_attempts = max(1, int(os.getenv("METATATE_MCP_RETRY_ATTEMPTS", "4")))
+        self.retry_backoff_seconds = float(os.getenv("METATATE_MCP_RETRY_BACKOFF_SECONDS", "1"))
         self._session = None
         self._initialized = False
 
@@ -228,7 +231,7 @@ class ManagedMCPMetatateClient:
             "inspect-data-meaning",
             _column_scoped_arguments(table_name, columns),
         )
-        return _filter_columns(response, columns)
+        return _normalize_data_meaning_response(_filter_columns(response, columns))
 
     def inspect_governance_rules(self, table_name: str, columns: list[str] | None = None) -> dict[str, Any]:
         return self._call_tool(
@@ -264,7 +267,7 @@ class ManagedMCPMetatateClient:
             "destination_jurisdiction": params.get("destination_jurisdiction"),
             "consumer_jurisdiction": params.get("consumer_jurisdiction"),
         }
-        return self._call_tool("validate-query-context", _drop_none(payload))
+        return _normalize_validation_response(self._call_tool("validate-query-context", _drop_none(payload)))
 
     def explain_why(
         self,
@@ -289,11 +292,15 @@ class ManagedMCPMetatateClient:
                 "clientInfo": {"name": "metatate-examples", "version": "1.0.0"},
             },
         )
-        self.session.post(
-            self.endpoint,
-            json={"jsonrpc": "2.0", "method": "notifications/initialized"},
-            timeout=self.timeout_seconds,
+        notification_response = self._post_json_with_retry(
+            {"jsonrpc": "2.0", "method": "notifications/initialized"},
+            "notifications/initialized",
         )
+        if notification_response.status_code >= 400:
+            raise RuntimeError(
+                "MCP initialization notification failed with "
+                f"HTTP {notification_response.status_code}: {notification_response.text}"
+            )
         self._initialized = True
 
     def _request(self, method: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -305,10 +312,36 @@ class ManagedMCPMetatateClient:
         if params is not None:
             payload["params"] = params
 
-        response = self.session.post(self.endpoint, json=payload, timeout=self.timeout_seconds)
+        response = self._post_json_with_retry(payload, method)
         if response.status_code >= 400:
             raise RuntimeError(f"MCP request failed with HTTP {response.status_code}: {response.text}")
         return _parse_sse_or_json(response.text)
+
+    def _post_json_with_retry(self, payload: dict[str, Any], method: str) -> Any:
+        retryable_statuses = {408, 425, 429, 500, 502, 503, 504}
+        last_error: Exception | None = None
+
+        for attempt in range(1, self.retry_attempts + 1):
+            try:
+                response = self.session.post(self.endpoint, json=payload, timeout=self.timeout_seconds)
+            except Exception as exc:
+                last_error = exc
+                if attempt == self.retry_attempts:
+                    break
+                time.sleep(self._retry_delay(attempt))
+                continue
+
+            if response.status_code in retryable_statuses and attempt < self.retry_attempts:
+                time.sleep(self._retry_delay(attempt))
+                continue
+            return response
+
+        raise RuntimeError(
+            f"MCP request {method} failed after {self.retry_attempts} attempts: {last_error}"
+        ) from last_error
+
+    def _retry_delay(self, attempt: int) -> float:
+        return min(self.retry_backoff_seconds * (2 ** (attempt - 1)), 8.0)
 
 
 def get_client() -> OfflineMetatateClient | ManagedMCPMetatateClient:
@@ -380,6 +413,46 @@ def _filter_columns(response: dict[str, Any], columns: list[str] | None) -> dict
     result["data"]["columns"] = [
         column for column in response.get("data", {}).get("columns", []) if column.get("column_name") in wanted
     ]
+    return result
+
+
+def _normalize_data_meaning_response(response: dict[str, Any]) -> dict[str, Any]:
+    result = deepcopy(response)
+    for column in result.get("data", {}).get("columns", []):
+        if "masking_type" not in column:
+            masking = column.get("masking") or {}
+            column["masking_type"] = masking.get("type")
+    return result
+
+
+def _normalize_validation_response(response: dict[str, Any]) -> dict[str, Any]:
+    result = deepcopy(response)
+    data = result.setdefault("data", {})
+
+    decision = data.get("decision")
+    if isinstance(decision, dict):
+        if "decision" not in decision and data.get("overall_decision"):
+            decision["decision"] = data["overall_decision"]
+        if "rationale" not in decision and data.get("summary"):
+            decision["rationale"] = data["summary"]
+    elif data.get("overall_decision"):
+        data["decision"] = {"decision": data["overall_decision"], "rationale": data.get("summary")}
+
+    action = data.setdefault("agent_action", {})
+    if "message" not in action:
+        action["message"] = action.get("safe_next_step") or action.get("suggested_next_tool") or "Review the validation result before proceeding."
+    if "type" not in action:
+        if data.get("overall_decision") == "DENY":
+            action["type"] = "block"
+        elif action.get("rewrite_required"):
+            action["type"] = "revise_query"
+        elif data.get("overall_decision") == "ALLOW":
+            action["type"] = "proceed"
+        else:
+            action["type"] = "review_controls"
+    if "validation_id" not in data and action.get("validation_id"):
+        data["validation_id"] = action["validation_id"]
+
     return result
 
 

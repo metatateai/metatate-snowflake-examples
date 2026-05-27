@@ -20,6 +20,8 @@ def main() -> None:
         "docs/live-mode.md",
         "docs/snowflake-setup.md",
         "common/metatate_client.py",
+        "scripts/create_mcp_pat_user.sh",
+        "scripts/run_notebook_pack.sh",
         "sql/setup_acmecloud_demo.sql",
         "sql/smoke_acmecloud_demo.sql",
         "sql/cleanup_acmecloud_demo.sql",
