@@ -20,6 +20,8 @@ def main() -> None:
         "docs/live-mode.md",
         "docs/snowflake-setup.md",
         "common/metatate_client.py",
+        "scripts/create_mcp_pat_user.sh",
+        "scripts/run_notebook_pack.sh",
         "sql/setup_acmecloud_demo.sql",
         "sql/smoke_acmecloud_demo.sql",
         "sql/cleanup_acmecloud_demo.sql",
@@ -60,7 +62,7 @@ def validate_policy_files() -> None:
 
 def validate_notebooks() -> None:
     notebooks = sorted((ROOT / "notebooks").glob("*.ipynb"))
-    assert len(notebooks) == 4, "expected four starter notebooks"
+    assert len(notebooks) == 12, "expected twelve starter notebooks"
     for path in notebooks:
         with path.open("r", encoding="utf-8") as handle:
             payload = json.load(handle)
