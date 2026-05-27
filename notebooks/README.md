@@ -11,5 +11,8 @@ server instead.
 2. `01_decision_layer_cookbook.ipynb`
 3. `02_governed_sql_agent_langgraph.ipynb`
 4. `03_transfer_governance_before_export.ipynb`
+5. `04_governed_text_to_sql_agent.ipynb`
+6. `05_agent_red_team_evaluation_harness.ipynb`
+7. `06_ci_gate_for_data_ai_changes.ipynb`
 
 The notebooks are generated from `scripts/build_notebooks.py` so the JSON remains reproducible.

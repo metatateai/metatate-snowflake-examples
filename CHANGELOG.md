@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added Wave 1 agent-governance examples: governed text-to-SQL, red-team evaluation, and CI-style data/AI release gates.
+- Added offline Metatate fixtures for safe analytics, marketing denial, and AI training denial query validation.
 - Changed live notebook mode to call the Snowflake-managed Metatate MCP server
   over HTTP with a role-restricted PAT.
 - Removed the direct Snowflake SQL connector live path from examples.

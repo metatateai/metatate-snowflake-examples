@@ -124,7 +124,17 @@ class OfflineMetatateClient:
         }
 
     def validate_query_context(self, sql: str, **params: Any) -> dict[str, Any]:
-        return self._load("validate_query_context_analytics")
+        normalized_sql = sql.upper()
+        intended_use = str(params.get("intended_use") or "").lower()
+        operation = str(params.get("operation") or "").lower()
+
+        if intended_use in {"marketing", "advertising", "personalization"}:
+            return self._load("validate_query_context_marketing_deny")
+        if intended_use in {"ml_training", "training", "train"} or operation == "train":
+            return self._load("validate_query_context_training_deny")
+        if "EMAIL" in normalized_sql or "CUSTOMER_NAME" in normalized_sql or "SELECT *" in normalized_sql:
+            return self._load("validate_query_context_analytics")
+        return self._load("validate_query_context_safe_analytics")
 
     def explain_why(
         self,

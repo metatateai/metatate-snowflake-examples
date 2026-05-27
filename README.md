@@ -58,6 +58,9 @@ Start here:
 2. `notebooks/01_decision_layer_cookbook.ipynb`
 3. `notebooks/02_governed_sql_agent_langgraph.ipynb`
 4. `notebooks/03_transfer_governance_before_export.ipynb`
+5. `notebooks/04_governed_text_to_sql_agent.ipynb`
+6. `notebooks/05_agent_red_team_evaluation_harness.ipynb`
+7. `notebooks/06_ci_gate_for_data_ai_changes.ipynb`
 
 The notebooks default to offline mode and use committed sample Metatate responses. That means a reader can understand the decision flow without Snowflake credentials.
 

@@ -2,10 +2,14 @@
 
 The examples are use-case first. Frameworks are included when they make the Metatate decision-layer story clearer.
 
-## Initial Pack
+## Implemented Pack
 
 - Snowflake Native App SQL tools
-- LangGraph
+- Managed MCP live-mode client
+- LangGraph governed SQL agent
+- Governed text-to-SQL agent pattern
+- Agent red-team evaluation harness
+- CI-style data and AI release gate
 
 ## Next Candidates
 
@@ -13,7 +17,7 @@ The examples are use-case first. Frameworks are included when they make the Meta
 - OpenAI Agents SDK
 - LlamaIndex
 - Pydantic AI
-- dbt or Airflow policy gates
+- dbt or Airflow policy gates beyond the notebook-first CI gate
 
 ## Later Exploration
 

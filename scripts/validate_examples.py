@@ -60,7 +60,7 @@ def validate_policy_files() -> None:
 
 def validate_notebooks() -> None:
     notebooks = sorted((ROOT / "notebooks").glob("*.ipynb"))
-    assert len(notebooks) == 4, "expected four starter notebooks"
+    assert len(notebooks) == 7, "expected seven starter notebooks"
     for path in notebooks:
         with path.open("r", encoding="utf-8") as handle:
             payload = json.load(handle)
