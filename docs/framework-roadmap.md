@@ -8,6 +8,7 @@ The examples are use-case first. Frameworks are included when they make the Meta
 - Managed MCP live-mode client
 - LangGraph-compatible governed SQL agent pattern
 - LangGraph StateGraph runtime acceptance
+- LangGraph governed SQL agent runtime with conditional routing
 - Governed text-to-SQL agent pattern
 - Agent red-team evaluation harness
 - CI-style data and AI release gate
@@ -27,6 +28,7 @@ All notebooks are executed in offline mode and live mode through the Snowflake-m
 Framework runtime coverage is separate:
 
 - LangGraph has a deterministic runtime acceptance script that invokes the real `StateGraph` runtime without calling an LLM.
+- LangGraph also has a multi-node governed SQL agent runtime example that proves approve, revise, and block routing.
 - OpenAI Agents SDK and LlamaIndex have deterministic runtime acceptance scripts that invoke the real framework `FunctionTool` object without calling an LLM.
 - Cortex has a live runtime acceptance script that creates a Cortex Agent object, runs a server-side generic custom tool, and asserts the Metatate decision returned through the agent response.
 - A framework is not considered fully integrated until a runtime test proves the Metatate tool is invoked by that framework and the framework response changes based on the Metatate decision.

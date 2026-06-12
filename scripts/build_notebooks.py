@@ -1337,6 +1337,85 @@ def cortex_agent_runtime_notebook() -> dict:
     )
 
 
+def langgraph_governed_sql_agent_runtime_notebook() -> dict:
+    return notebook(
+        [
+            markdown(
+                """
+                # 13 - LangGraph Governed SQL Agent Runtime
+
+                This notebook uses a real LangGraph `StateGraph` to model a governed SQL agent. The graph plans a SQL draft, validates it with Metatate, and then routes to one of three outcomes:
+
+                - approve safe SQL
+                - revise SQL that needs minimization
+                - block SQL for prohibited use
+
+                The planner is deterministic so the example is repeatable in offline mode and live mode. In production, an LLM can replace the deterministic planner node while keeping the Metatate validation and routing nodes in the same position.
+                """
+            ),
+            code(SETUP_CELL),
+            markdown("## Build the graph"),
+            code(
+                """
+                from framework_runtime.langgraph_governed_sql_agent import (
+                    build_governed_sql_agent,
+                    summarize_state,
+                )
+
+                app = build_governed_sql_agent(client)
+                print("LangGraph governed SQL agent compiled.")
+                """
+            ),
+            markdown("## Run representative requests"),
+            code(
+                """
+                questions = {
+                    "safe": "Show ARR by region for active customers.",
+                    "unsafe": "Show EU customers and include their emails so analysts can identify accounts.",
+                    "blocked": "Build a direct marketing email campaign list for active customers.",
+                }
+
+                states = {
+                    name: app.invoke({"question": question})
+                    for name, question in questions.items()
+                }
+                summaries = {
+                    name: summarize_state(state)
+                    for name, state in states.items()
+                }
+
+                pd.DataFrame(summaries).T[
+                    ["route", "decision", "intended_use", "validation_id", "answer"]
+                ]
+                """
+            ),
+            markdown("## Inspect the SQL routing outcomes"),
+            code(
+                """
+                for name, state in states.items():
+                    summary = summarize_state(state)
+                    print(f"=== {name.upper()} ===")
+                    print(f"Route: {summary['route']}")
+                    print(f"Decision: {summary['decision']}")
+                    print(f"Validation ID: {summary['validation_id']}")
+                    print("Draft SQL:")
+                    print(summary["draft_sql"])
+                    print("Final SQL:")
+                    print(summary["final_sql"])
+                    print("Notes:")
+                    print(summary["notes"])
+                    print()
+                """
+            ),
+            markdown(
+                """
+                The graph only returns executable SQL from the approve or revise branches. The block branch returns no SQL, which keeps prohibited requests from leaking into downstream execution.
+                """
+            ),
+        ]
+    )
+
+
 NOTEBOOKS = {
     "00_setup_live_or_offline.ipynb": setup_notebook,
     "01_decision_layer_cookbook.ipynb": cookbook_notebook,
@@ -1351,6 +1430,7 @@ NOTEBOOKS = {
     "10_human_approval_packet_for_conditional_export.ipynb": approval_workflow_notebook,
     "11_llamaindex_governed_retrieval_pattern.ipynb": llamaindex_retrieval_notebook,
     "12_snowflake_cortex_agent_runtime.ipynb": cortex_agent_runtime_notebook,
+    "13_langgraph_governed_sql_agent_runtime.ipynb": langgraph_governed_sql_agent_runtime_notebook,
 }
 
 

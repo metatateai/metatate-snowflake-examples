@@ -12,5 +12,6 @@ if sys.version_info < (3, 10):
 PY
 
 python3 framework_runtime/langgraph_acceptance.py
+python3 framework_runtime/langgraph_agent_acceptance.py
 python3 framework_runtime/openai_agents_acceptance.py
 python3 framework_runtime/llamaindex_acceptance.py

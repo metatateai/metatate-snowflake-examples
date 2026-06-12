@@ -12,6 +12,7 @@ This repository separates examples from runtime acceptance tests.
 | Setup and context discovery | `00_setup_live_or_offline.ipynb` | Yes | Yes | Not applicable |
 | Decision layer cookbook | `01_decision_layer_cookbook.ipynb` | Yes | Yes | Not applicable |
 | LangGraph governed SQL agent | `02_governed_sql_agent_langgraph.ipynb` | Yes | Yes | `framework_runtime/langgraph_acceptance.py` |
+| LangGraph governed SQL agent runtime | `13_langgraph_governed_sql_agent_runtime.ipynb` | Yes; requires framework deps | Yes; requires framework deps and MCP env | `framework_runtime/langgraph_agent_acceptance.py` |
 | Transfer governance before export | `03_transfer_governance_before_export.ipynb` | Yes | Yes | Covered by notebook execution |
 | Governed text-to-SQL | `04_governed_text_to_sql_agent.ipynb` | Yes | Yes | Covered by notebook execution |
 | Agent red-team evaluation | `05_agent_red_team_evaluation_harness.ipynb` | Yes | Yes | Covered by notebook execution |
@@ -45,6 +46,12 @@ Run framework runtime acceptance:
 
 ```bash
 scripts/run_framework_runtime_acceptance.sh
+```
+
+Run the LangGraph runtime notebook:
+
+```bash
+scripts/run_langgraph_runtime_notebook.sh
 ```
 
 Run hosted Cortex Agent runtime acceptance:
