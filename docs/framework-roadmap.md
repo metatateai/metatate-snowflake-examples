@@ -17,7 +17,7 @@ The examples are use-case first. Frameworks are included when they make the Meta
 - Snowflake Cortex Agent custom-tool live runtime acceptance
 - OpenAI Agents SDK-style tool guard pattern
 - OpenAI Agents SDK FunctionTool runtime acceptance
-- Human approval packet for conditional exports
+- Human-in-the-loop exception workflow with acceptance coverage
 - LlamaIndex governed retrieval pattern
 - LlamaIndex FunctionTool runtime acceptance
 

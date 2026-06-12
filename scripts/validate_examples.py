@@ -18,6 +18,7 @@ def main() -> None:
         "README.md",
         "docs/demo-data-model.md",
         "docs/ci-cd-policy-gate.md",
+        "docs/human-exception-workflow.md",
         "docs/validation-matrix.md",
         "docs/live-mode.md",
         "docs/snowflake-setup.md",
@@ -35,12 +36,18 @@ def main() -> None:
         "framework_runtime/scenarios.py",
         "framework_runtime/openai_agents_acceptance.py",
         "framework_runtime/llamaindex_acceptance.py",
+        "human_exception_workflow/__init__.py",
+        "human_exception_workflow/cli.py",
+        "human_exception_workflow/workflow.py",
+        "human_exception_workflow/acceptance.py",
         "docs/cortex-agent-runtime-acceptance.md",
         "scripts/create_mcp_pat_user.sh",
         "scripts/run_cortex_agent_runtime_acceptance.sh",
         "scripts/run_cortex_agent_runtime_notebook.sh",
         "scripts/run_cicd_policy_gate.sh",
         "scripts/run_cicd_policy_gate_acceptance.sh",
+        "scripts/run_human_exception_workflow.sh",
+        "scripts/run_human_exception_workflow_acceptance.sh",
         "scripts/run_framework_runtime_acceptance.sh",
         "scripts/run_langgraph_runtime_notebook.sh",
         "scripts/run_notebook_pack.sh",
@@ -59,6 +66,7 @@ def main() -> None:
     validate_sql_fixture()
     validate_cortex_agent_runtime_files()
     validate_cicd_policy_gate_files()
+    validate_human_exception_workflow_files()
     validate_framework_runtime_files()
     validate_python_imports()
     print("metatate-examples validation passed")
@@ -176,6 +184,31 @@ def validate_cicd_policy_gate_files() -> None:
     assert "cicd_policy_gate/acceptance.py" in acceptance_runner, "CI/CD acceptance runner missing script"
 
 
+def validate_human_exception_workflow_files() -> None:
+    workflow = (ROOT / "human_exception_workflow" / "workflow.py").read_text(encoding="utf-8")
+    for marker in (
+        "validate_query_context",
+        "authorize_use",
+        "DEFAULT_REQUESTS",
+        "DEFAULT_REVIEWS",
+        "resumed_with_controls",
+        "blocked_by_policy",
+    ):
+        assert marker in workflow, f"human exception workflow missing {marker}"
+
+    acceptance = (ROOT / "human_exception_workflow" / "acceptance.py").read_text(encoding="utf-8")
+    for marker in ("run_workflow", "ready_without_exception", "resumed_with_controls", "blocked_by_policy"):
+        assert marker in acceptance, f"human exception acceptance missing {marker}"
+
+    runner = (ROOT / "scripts" / "run_human_exception_workflow.sh").read_text(encoding="utf-8")
+    assert "python3 -m human_exception_workflow.cli" in runner, "human exception runner does not call the CLI"
+
+    acceptance_runner = (ROOT / "scripts" / "run_human_exception_workflow_acceptance.sh").read_text(
+        encoding="utf-8"
+    )
+    assert "human_exception_workflow/acceptance.py" in acceptance_runner, "human exception acceptance runner missing script"
+
+
 def validate_cortex_agent_runtime_files() -> None:
     runner = (ROOT / "scripts" / "run_cortex_agent_runtime_acceptance.sh").read_text(encoding="utf-8")
     assert "cortex_agent_runtime/acceptance.py" in runner, "Cortex runner missing acceptance script"
@@ -202,6 +235,9 @@ def validate_python_imports() -> None:
     cicd_policy_gate = importlib.import_module("cicd_policy_gate")
     for name in ("evaluate_changes", "load_changes", "DEFAULT_CHANGESET_PATH"):
         assert hasattr(cicd_policy_gate, name), f"cicd_policy_gate missing {name}"
+    human_exception_workflow = importlib.import_module("human_exception_workflow")
+    for name in ("run_workflow", "DEFAULT_REQUESTS", "DEFAULT_REVIEWS"):
+        assert hasattr(human_exception_workflow, name), f"human_exception_workflow missing {name}"
 
 
 if __name__ == "__main__":
