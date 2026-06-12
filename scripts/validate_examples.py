@@ -24,6 +24,8 @@ def main() -> None:
         "cortex_agent_runtime/acceptance.py",
         "cortex_agent_runtime/__init__.py",
         "framework_runtime/langgraph_acceptance.py",
+        "framework_runtime/langgraph_agent_acceptance.py",
+        "framework_runtime/langgraph_governed_sql_agent.py",
         "framework_runtime/scenarios.py",
         "framework_runtime/openai_agents_acceptance.py",
         "framework_runtime/llamaindex_acceptance.py",
@@ -32,6 +34,7 @@ def main() -> None:
         "scripts/run_cortex_agent_runtime_acceptance.sh",
         "scripts/run_cortex_agent_runtime_notebook.sh",
         "scripts/run_framework_runtime_acceptance.sh",
+        "scripts/run_langgraph_runtime_notebook.sh",
         "scripts/run_notebook_pack.sh",
         "sql/setup_acmecloud_demo.sql",
         "sql/smoke_acmecloud_demo.sql",
@@ -76,7 +79,7 @@ def validate_policy_files() -> None:
 
 def validate_notebooks() -> None:
     notebooks = sorted((ROOT / "notebooks").glob("*.ipynb"))
-    assert len(notebooks) == 13, "expected thirteen starter notebooks"
+    assert len(notebooks) == 14, "expected fourteen starter notebooks"
     for path in notebooks:
         with path.open("r", encoding="utf-8") as handle:
             payload = json.load(handle)
@@ -107,6 +110,7 @@ def validate_framework_runtime_files() -> None:
     runner = (ROOT / "scripts" / "run_framework_runtime_acceptance.sh").read_text(encoding="utf-8")
     for command in (
         "python3 framework_runtime/langgraph_acceptance.py",
+        "python3 framework_runtime/langgraph_agent_acceptance.py",
         "python3 framework_runtime/openai_agents_acceptance.py",
         "python3 framework_runtime/llamaindex_acceptance.py",
     ):
@@ -124,6 +128,13 @@ def validate_framework_runtime_files() -> None:
     langgraph = (ROOT / "framework_runtime" / "langgraph_acceptance.py").read_text(encoding="utf-8")
     for marker in ("StateGraph", "validate_with_metatate", "assert_guard_behavior"):
         assert marker in langgraph, f"LangGraph acceptance missing {marker}"
+
+    langgraph_agent = (ROOT / "framework_runtime" / "langgraph_agent_acceptance.py").read_text(encoding="utf-8")
+    for marker in ("build_governed_sql_agent", "approve", "revise", "block"):
+        assert marker in langgraph_agent, f"LangGraph agent acceptance missing {marker}"
+
+    langgraph_notebook_runner = (ROOT / "scripts" / "run_langgraph_runtime_notebook.sh").read_text(encoding="utf-8")
+    assert "13_langgraph_governed_sql_agent_runtime.ipynb" in langgraph_notebook_runner
 
 
 def validate_cortex_agent_runtime_files() -> None:

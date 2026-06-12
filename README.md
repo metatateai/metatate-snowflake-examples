@@ -46,13 +46,14 @@ Demo policy behavior:
 | `10_human_approval_packet_for_conditional_export.ipynb` | Turning conditional export decisions into reviewer-ready approval packets. |
 | `11_llamaindex_governed_retrieval_pattern.ipynb` | A governed retrieval function that can be wrapped as a LlamaIndex tool. |
 | `12_snowflake_cortex_agent_runtime.ipynb` | Live-only Cortex Agent object with a server-side Metatate custom tool. |
+| `13_langgraph_governed_sql_agent_runtime.ipynb` | LangGraph runtime SQL agent with approve, revise, and block routes. |
 
 The core notebooks run in two modes:
 
 - **Offline:** default; uses committed JSON fixtures and needs no Snowflake account.
 - **Live:** calls the Snowflake-managed Metatate MCP server with a role-restricted PAT.
 
-Notebook `12_snowflake_cortex_agent_runtime.ipynb` is live-only because it creates and runs Snowflake Cortex Agent objects.
+Notebook `12_snowflake_cortex_agent_runtime.ipynb` is live-only because it creates and runs Snowflake Cortex Agent objects. Notebook `13_langgraph_governed_sql_agent_runtime.ipynb` requires the framework dependencies from `requirements-framework.txt`.
 
 ## Validation Scope
 
@@ -61,6 +62,7 @@ The notebook pack is fully executed in offline mode and live mode through the Sn
 Runtime coverage is separate from core notebook execution:
 
 - `02_governed_sql_agent_langgraph.ipynb` is paired with a deterministic LangGraph `StateGraph` runtime acceptance script.
+- `13_langgraph_governed_sql_agent_runtime.ipynb` is paired with a multi-node LangGraph agent runtime acceptance script.
 - `08_snowflake_cortex_agent_tool_preflight.ipynb` is a Cortex-style custom-tool preflight pattern.
 - `scripts/run_cortex_agent_runtime_acceptance.sh` creates and runs a live Cortex Agent object with a server-side Metatate custom tool.
 - `09_openai_agents_tool_guard_pattern.ipynb` is paired with a deterministic OpenAI Agents SDK `FunctionTool` runtime acceptance script.
@@ -117,6 +119,15 @@ METATATE_CORTEX_ACCOUNT_URL=https://<account-url> \
 SNOWFLAKE_ROLE=NAC \
 METATATE_CORTEX_WAREHOUSE=WH_NAC \
 scripts/run_cortex_agent_runtime_notebook.sh
+```
+
+To execute the LangGraph runtime notebook:
+
+```bash
+python3 -m venv .venv-framework
+source .venv-framework/bin/activate
+pip install -r requirements-framework.txt
+scripts/run_langgraph_runtime_notebook.sh
 ```
 
 ## Live Mode
