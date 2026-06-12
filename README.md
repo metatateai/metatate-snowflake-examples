@@ -43,7 +43,7 @@ Demo policy behavior:
 | `07_governed_rag_embedding_ingestion_gate.ipynb` | Pre-ingestion checks before data enters RAG or embedding workflows. |
 | `08_snowflake_cortex_agent_tool_preflight.ipynb` | A Cortex-style custom-tool preflight pattern using Metatate decisions. |
 | `09_openai_agents_tool_guard_pattern.ipynb` | A deterministic tool guard pattern for OpenAI Agents SDK-style apps. |
-| `10_human_approval_packet_for_conditional_export.ipynb` | Turning conditional export decisions into reviewer-ready approval packets. |
+| `10_human_approval_packet_for_conditional_export.ipynb` | Human-in-the-loop exception workflow for safe, conditional, and denied requests. |
 | `11_llamaindex_governed_retrieval_pattern.ipynb` | A governed retrieval function that can be wrapped as a LlamaIndex tool. |
 | `12_snowflake_cortex_agent_runtime.ipynb` | Live-only Cortex Agent object with a server-side Metatate custom tool. |
 | `13_langgraph_governed_sql_agent_runtime.ipynb` | LangGraph runtime SQL agent with approve, revise, and block routes. |
@@ -67,6 +67,7 @@ Runtime coverage is separate from core notebook execution:
 - `08_snowflake_cortex_agent_tool_preflight.ipynb` is a Cortex-style custom-tool preflight pattern.
 - `scripts/run_cortex_agent_runtime_acceptance.sh` creates and runs a live Cortex Agent object with a server-side Metatate custom tool.
 - `09_openai_agents_tool_guard_pattern.ipynb` is paired with a deterministic OpenAI Agents SDK `FunctionTool` runtime acceptance script.
+- `10_human_approval_packet_for_conditional_export.ipynb` is backed by the reusable `human_exception_workflow` package and an acceptance script.
 - `11_llamaindex_governed_retrieval_pattern.ipynb` is paired with a deterministic LlamaIndex `FunctionTool` runtime acceptance script.
 
 The LangGraph, OpenAI, and LlamaIndex runtime checks invoke real framework objects, but they intentionally do not call an LLM. Cortex Agent runtime acceptance is live-only and calls Snowflake Cortex Agents. Review [docs/validation-matrix.md](docs/validation-matrix.md), [docs/framework-runtime-acceptance.md](docs/framework-runtime-acceptance.md), and [docs/cortex-agent-runtime-acceptance.md](docs/cortex-agent-runtime-acceptance.md) for the exact coverage.
@@ -94,6 +95,15 @@ scripts/run_cicd_policy_gate_acceptance.sh
 ```
 
 Use `scripts/run_cicd_policy_gate.sh --strict` for a CI-style non-zero exit when denied changes are present. See [docs/ci-cd-policy-gate.md](docs/ci-cd-policy-gate.md).
+
+To run the human-in-the-loop exception workflow locally:
+
+```bash
+scripts/run_human_exception_workflow.sh
+scripts/run_human_exception_workflow_acceptance.sh
+```
+
+See [docs/human-exception-workflow.md](docs/human-exception-workflow.md).
 
 To run the framework runtime acceptance checks:
 
@@ -179,6 +189,7 @@ common/                         Shared Python client helpers
 cicd_policy_gate/               Reusable CI/CD policy gate example
 docs/                           Setup, demo model, and troubleshooting
 cortex_agent_runtime/           Live Cortex Agent object acceptance helpers
+human_exception_workflow/       Human review and exception workflow example
 notebooks/                      Notebook-first walkthroughs
 sample-data/acmecloud/tables/   Small synthetic CSV tables
 sample-data/acmecloud/policies/ Example policy YAML

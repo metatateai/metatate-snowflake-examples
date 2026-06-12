@@ -1,14 +1,17 @@
-# Human Approval Packet Output
+# Human-in-the-Loop Exception Workflow Output
 
-The conditional Salesforce export is converted into a reviewer-ready packet.
+The workflow evaluates three requests:
 
-The packet includes:
+- a safe aggregate analytics query that proceeds without an exception
+- a conditional Salesforce export that becomes a reviewer-ready exception packet
+- a support-ticket training job that remains blocked by policy
 
-- Metatate decision and decision ID
-- source table
-- destination system and jurisdiction
-- required controls
-- obligations
-- rationale and reviewer note
+The conditional packet includes the Metatate decision, evidence ID, source, destination, required controls, obligations, rationale, reviewer note, and required attestations.
 
-This turns a conditional agent decision into an operational review item.
+The approved Salesforce request resumes only after `approval_recorded` and `anonymization_before_transfer` are attested. Denied requests do not resume.
+
+Command-line version:
+
+```bash
+scripts/run_human_exception_workflow.sh
+```

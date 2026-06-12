@@ -993,80 +993,79 @@ def approval_workflow_notebook() -> dict:
         [
             markdown(
                 """
-                # 10 - Human Approval Packet For Conditional Export
+                # 10 - Human-in-the-Loop Exception Workflow
 
-                Metatate decisions are operational. A `CONDITIONAL` result should turn into an approval packet with the source, destination, required controls, and evidence needed by the reviewer.
+                Metatate decisions are operational. Safe requests can proceed, conditional requests should become reviewer-ready exception packets, and denied requests should remain blocked.
+
+                This notebook uses the same `human_exception_workflow` package as the command-line runner.
                 """
             ),
             code(SETUP_CELL),
-            markdown("## Request an external transfer decision"),
+            markdown("## Review the workflow requests"),
             code(
                 """
-                transfer = client.authorize_use(
-                    "ACMECLOUD_DEMO.PUBLIC.CUSTOMERS",
-                    operation="export",
-                    intended_use="external_sharing",
-                    actor_role="DATA_ENGINEER",
-                    columns=["CUSTOMER_ID", "CUSTOMER_NAME", "EMAIL", "ACCOUNT_STATUS"],
-                    destination={"system": "SALESFORCE", "jurisdiction": "US"},
-                    consumer_jurisdiction="EU",
-                )
-                print(json.dumps(transfer["data"], indent=2))
-                """
-            ),
-            markdown("## Convert the decision into an approval packet"),
-            code(
-                """
-                def compact(value):
-                    if value is None:
-                        return []
-                    if isinstance(value, list):
-                        return value
-                    return [value]
+                from human_exception_workflow import DEFAULT_REQUESTS, print_summary, run_workflow
 
-                data = transfer["data"]
-                decision_id = data.get("decision_id")
-                explanation = client.explain_why(decision_id=decision_id) if decision_id else {"data": {}}
-
-                approval_packet = {
-                    "title": "Approve controlled customer export to Salesforce",
-                    "decision": decision_label(transfer),
-                    "decision_id": decision_id,
-                    "source": data.get("table_name"),
-                    "destination": data.get("destination", {"system": "SALESFORCE", "jurisdiction": "US"}),
-                    "consumer_jurisdiction": data.get("consumer_jurisdiction", "EU"),
-                    "required_controls": compact(data.get("conditions")),
-                    "obligations": compact(data.get("obligations")),
-                    "rationale": rationale_text(transfer),
-                    "reviewer_note": agent_action_text(transfer),
-                    "explanation_summary": explanation.get("data", {}).get("summary") or explanation.get("data", {}).get("rationale"),
-                }
-
-                print(json.dumps(approval_packet, indent=2))
-                """
-            ),
-            markdown("## Reviewer-facing summary"),
-            code(
-                """
-                lines = [
-                    f"# {approval_packet['title']}",
-                    f"Decision: {approval_packet['decision']}",
-                    f"Decision ID: {approval_packet['decision_id']}",
-                    f"Source: {approval_packet['source']}",
-                    f"Destination: {approval_packet['destination']}",
-                    "",
-                    "Required controls:",
+                pd.DataFrame(DEFAULT_REQUESTS)[
+                    ["request_id", "kind", "title", "operation", "intended_use", "owner"]
                 ]
-                lines.extend(f"- {control}" for control in approval_packet["required_controls"])
-                lines.extend(["", "Obligations:"])
-                lines.extend(f"- {obligation}" for obligation in approval_packet["obligations"])
-                lines.extend(["", f"Rationale: {approval_packet['rationale']}"])
-                print("\\n".join(lines))
+                """
+            ),
+            markdown("## Run the exception workflow through Metatate"),
+            code(
+                """
+                workflow_run = run_workflow(client)
+                report = workflow_run.to_dict()
+                print_summary(workflow_run)
+
+                pd.DataFrame(report["items"])[
+                    ["request_id", "title", "decision", "status", "evidence_id"]
+                ]
+                """
+            ),
+            markdown("## Inspect the conditional exception packet"),
+            code(
+                """
+                conditional_item = next(item for item in report["items"] if item["request_id"] == "req-002")
+                print(json.dumps(conditional_item["packet"], indent=2))
+                """
+            ),
+            markdown("## Reviewer decision and resumed workflow"),
+            code(
+                """
+                review = conditional_item["review"]
+                resume_payload = conditional_item["resume_payload"]
+
+                print("Reviewer decision")
+                print(json.dumps(review, indent=2))
+                print("\\nResume payload")
+                print(json.dumps(resume_payload, indent=2))
+                """
+            ),
+            markdown("## Blocked requests do not resume"),
+            code(
+                """
+                blocked_item = next(item for item in report["items"] if item["request_id"] == "req-003")
+                print(json.dumps({
+                    "request_id": blocked_item["request_id"],
+                    "decision": blocked_item["decision"],
+                    "status": blocked_item["status"],
+                    "evidence_id": blocked_item["evidence_id"],
+                    "rationale": blocked_item["packet"]["rationale"],
+                    "resume_payload": blocked_item["resume_payload"],
+                }, indent=2))
+                """
+            ),
+            markdown("## Run the same workflow from a terminal"),
+            code(
+                """
+                print("scripts/run_human_exception_workflow.sh")
+                print("scripts/run_human_exception_workflow_acceptance.sh")
                 """
             ),
             markdown(
                 """
-                This is the bridge from agent output to governance operations. Conditional decisions become reviewable work items instead of ambiguous chat messages.
+                This is the bridge from agent output to governance operations. Conditional decisions become controlled review work; denied decisions remain blocked instead of becoming informal overrides.
                 """
             ),
         ]

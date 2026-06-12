@@ -20,7 +20,7 @@ This repository separates examples from runtime acceptance tests.
 | Governed RAG ingestion gate | `07_governed_rag_embedding_ingestion_gate.ipynb` | Yes | Yes | Covered by notebook execution |
 | Cortex Agent custom-tool preflight | `08_snowflake_cortex_agent_tool_preflight.ipynb` | Yes | Yes | Pattern only; use the Cortex runtime notebook for hosted runtime proof |
 | OpenAI Agents SDK tool guard | `09_openai_agents_tool_guard_pattern.ipynb` | Yes | Yes | `framework_runtime/openai_agents_acceptance.py` |
-| Human approval packet | `10_human_approval_packet_for_conditional_export.ipynb` | Yes | Yes | Covered by notebook execution |
+| Human-in-the-loop exception workflow | `10_human_approval_packet_for_conditional_export.ipynb` | Yes | Yes | `human_exception_workflow/acceptance.py` |
 | LlamaIndex governed retrieval | `11_llamaindex_governed_retrieval_pattern.ipynb` | Yes | Yes | `framework_runtime/llamaindex_acceptance.py` |
 | Cortex Agent hosted runtime | `12_snowflake_cortex_agent_runtime.ipynb` | Live-only | No; uses Snowflake Cortex Agents directly | `cortex_agent_runtime/acceptance.py` |
 
@@ -58,6 +58,18 @@ Run the CI/CD policy gate as a CI command:
 
 ```bash
 scripts/run_cicd_policy_gate.sh --strict
+```
+
+Run human exception workflow acceptance:
+
+```bash
+scripts/run_human_exception_workflow_acceptance.sh
+```
+
+Run the human exception workflow as a command:
+
+```bash
+scripts/run_human_exception_workflow.sh
 ```
 
 Run the LangGraph runtime notebook:
