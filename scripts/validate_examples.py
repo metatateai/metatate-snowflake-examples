@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> None:
     required = [
+        ".github/CODEOWNERS",
         ".github/workflows/offline-ci.yml",
         ".github/workflows/live-mcp-validation.yml",
         "README.md",
