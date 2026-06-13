@@ -15,10 +15,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main() -> None:
     required = [
+        ".github/workflows/offline-ci.yml",
+        ".github/workflows/live-mcp-validation.yml",
         "README.md",
         "docs/demo-data-model.md",
         "docs/ci-cd-policy-gate.md",
         "docs/human-exception-workflow.md",
+        "docs/release-process.md",
         "docs/validation-matrix.md",
         "docs/live-mode.md",
         "docs/snowflake-setup.md",
@@ -67,6 +70,7 @@ def main() -> None:
     validate_cortex_agent_runtime_files()
     validate_cicd_policy_gate_files()
     validate_human_exception_workflow_files()
+    validate_ci_workflows()
     validate_framework_runtime_files()
     validate_python_imports()
     print("metatate-examples validation passed")
@@ -207,6 +211,31 @@ def validate_human_exception_workflow_files() -> None:
         encoding="utf-8"
     )
     assert "human_exception_workflow/acceptance.py" in acceptance_runner, "human exception acceptance runner missing script"
+
+
+def validate_ci_workflows() -> None:
+    offline = (ROOT / ".github" / "workflows" / "offline-ci.yml").read_text(encoding="utf-8")
+    for marker in (
+        "scripts/validate_examples.py",
+        "scripts/run_cicd_policy_gate_acceptance.sh",
+        "scripts/run_human_exception_workflow_acceptance.sh",
+        "scripts/run_framework_runtime_acceptance.sh",
+        "scripts/run_notebook_pack.sh",
+    ):
+        assert marker in offline, f"offline CI workflow missing {marker}"
+
+    live = (ROOT / ".github" / "workflows" / "live-mcp-validation.yml").read_text(encoding="utf-8")
+    for marker in (
+        "workflow_dispatch",
+        "METATATE_MCP_URL",
+        "METATATE_EXAMPLES_PAT",
+        "scripts/run_cicd_policy_gate_acceptance.sh",
+        "scripts/run_human_exception_workflow_acceptance.sh",
+        "scripts/run_framework_runtime_acceptance.sh",
+        "scripts/run_notebook_pack.sh",
+        "scripts/run_langgraph_runtime_notebook.sh",
+    ):
+        assert marker in live, f"live MCP workflow missing {marker}"
 
 
 def validate_cortex_agent_runtime_files() -> None:

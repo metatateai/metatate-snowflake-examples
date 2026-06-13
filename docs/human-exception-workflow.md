@@ -17,7 +17,7 @@ scripts/run_human_exception_workflow.sh
 scripts/run_human_exception_workflow_acceptance.sh
 ```
 
-The runner writes a JSON report to `/private/tmp/metatate-human-exception-workflow-report.json`.
+The runner writes a JSON report to the system temporary directory, for example `/tmp/metatate-human-exception-workflow-report.json`.
 
 To make blocked requests return a non-zero exit code:
 

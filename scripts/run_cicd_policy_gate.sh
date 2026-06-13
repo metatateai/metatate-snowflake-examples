@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-: "${METATATE_CI_GATE_OUTPUT:=/private/tmp/metatate-cicd-policy-gate-report.json}"
+: "${METATATE_CI_GATE_OUTPUT:=${TMPDIR:-/tmp}/metatate-cicd-policy-gate-report.json}"
 
 set +e
 python3 -m cicd_policy_gate.cli \

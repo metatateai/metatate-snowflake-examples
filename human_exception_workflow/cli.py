@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 from common import get_client
@@ -16,7 +17,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run the Metatate human exception workflow example.")
     parser.add_argument(
         "--output",
-        default="/private/tmp/metatate-human-exception-workflow-report.json",
+        default=str(Path(tempfile.gettempdir()) / "metatate-human-exception-workflow-report.json"),
         help="Path for the machine-readable workflow report.",
     )
     parser.add_argument(

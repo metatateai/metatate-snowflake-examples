@@ -59,6 +59,8 @@ Notebook `12_snowflake_cortex_agent_runtime.ipynb` is live-only because it creat
 
 The notebook pack is fully executed in offline mode and live mode through the Snowflake-managed Metatate MCP server.
 
+Pull requests run the offline validation workflow in `.github/workflows/offline-ci.yml`. Release candidates should also run the manual live MCP workflow in `.github/workflows/live-mcp-validation.yml`.
+
 Runtime coverage is separate from core notebook execution:
 
 - `06_ci_gate_for_data_ai_changes.ipynb` is backed by the reusable `cicd_policy_gate` package and an acceptance script.
@@ -104,6 +106,8 @@ scripts/run_human_exception_workflow_acceptance.sh
 ```
 
 See [docs/human-exception-workflow.md](docs/human-exception-workflow.md).
+
+Review [docs/release-process.md](docs/release-process.md) before tagging a public release.
 
 To run the framework runtime acceptance checks:
 
@@ -185,6 +189,7 @@ For production use, deploy policies through Metatate. The SQL fixture is only fo
 ## Repository Map
 
 ```text
+.github/workflows/               Offline PR CI and manual live MCP validation
 common/                         Shared Python client helpers
 cicd_policy_gate/               Reusable CI/CD policy gate example
 docs/                           Setup, demo model, and troubleshooting
