@@ -26,6 +26,11 @@ This repository separates examples from runtime acceptance tests.
 
 ## Test Commands
 
+GitHub Actions:
+
+- `.github/workflows/offline-ci.yml` runs the offline PR gate.
+- `.github/workflows/live-mcp-validation.yml` runs the manual live managed MCP release gate.
+
 Run the core notebook pack offline:
 
 ```bash

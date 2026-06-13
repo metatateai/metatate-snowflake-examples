@@ -2,8 +2,11 @@
 
 ## Unreleased
 
-- Added Wave 1 agent-governance examples: governed text-to-SQL, red-team evaluation, and CI-style data/AI release gates.
-- Added Wave 2 integration examples: governed RAG/embedding ingestion, Cortex-style tool preflight, OpenAI-style tool guards, approval packets, and LlamaIndex-style governed retrieval.
+- Added GitHub Actions offline CI for pull requests.
+- Added a manual live managed MCP validation workflow for release candidates.
+- Added release process documentation for offline CI, live MCP validation, and public tags.
+- Added Wave 1 agent-governance examples: governed text-to-SQL, red-team evaluation, and CI/CD data/AI policy gates.
+- Added Wave 2 integration examples: governed RAG/embedding ingestion, Cortex-style tool preflight, OpenAI-style tool guards, human exception workflows, and LlamaIndex-style governed retrieval.
 - Added offline Metatate fixtures for safe analytics, marketing denial, and AI training denial query validation.
 - Changed live notebook mode to call the Snowflake-managed Metatate MCP server
   over HTTP with a role-restricted PAT.

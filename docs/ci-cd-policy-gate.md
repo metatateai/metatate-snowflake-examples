@@ -24,7 +24,7 @@ SQL changes call `validate-query-context`. Export, training, and tool-use change
 scripts/run_cicd_policy_gate.sh
 ```
 
-The default run prints a summary and writes a JSON report to `/private/tmp/metatate-cicd-policy-gate-report.json`.
+The default run prints a summary and writes a JSON report to the system temporary directory, for example `/tmp/metatate-cicd-policy-gate-report.json`.
 
 To use a different change set:
 
