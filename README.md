@@ -1,4 +1,10 @@
-# Metatate Examples
+# Metatate Examples (Snowflake Native App)
+
+> **Status: stable / maintenance mode.** These examples target the
+> **Metatate Snowflake Native App** and are complete and validated as-is.
+> Actively developed examples for **Metatate Cloud** — the cross-platform
+> SaaS — live at
+> [metatateai/metatate-examples](https://github.com/metatateai/metatate-examples).
 
 Metatate is a programmable decision layer for governed data. It gives agents and workflows structured context about meaning, policy, allowed use, transfer rules, and decision rationale before they touch data.
 
