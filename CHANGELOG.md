@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased
+This repository is in maintenance mode. Actively developed examples for
+Metatate Cloud live at
+[metatateai/metatate-examples](https://github.com/metatateai/metatate-examples).
+
+## 0.1.0 — 2026-07-16
+
+The Snowflake Native App examples pack, frozen at the repository split.
 
 - Added GitHub Actions offline CI for pull requests.
 - Added a manual live managed MCP validation workflow for release candidates.
@@ -11,9 +17,6 @@
 - Changed live notebook mode to call the Snowflake-managed Metatate MCP server
   over HTTP with a role-restricted PAT.
 - Removed the direct Snowflake SQL connector live path from examples.
-
-## 0.1.0
-
 - Rebuilt the examples repo around the AcmeCloud synthetic B2B SaaS dataset.
 - Added offline Metatate response fixtures.
 - Added live Snowflake fixture SQL aligned with the Native App MCP serving-table model.
